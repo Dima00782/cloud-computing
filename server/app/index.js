@@ -30,15 +30,13 @@ server.listen(PORT, () => { console.log("Server listening on: http://localhost:%
 const WebSocketServer = require('ws').Server;
 const wss = new WebSocketServer({ server });
 
+let connections = [];
+
 wss.on('connection', function (connection) {
+	connections.push(connection);
+
 	connection.on('message', function (message) {
-		let fn = null;
-		try {
-			data = JSON.parse(message);
-			fn();
-		} catch (e) {
-			console.log("Error parsing JSON");
-		}
+		connections[1].send(message);
 		console.log("ON MESSAGE:", message);
 	});
 
