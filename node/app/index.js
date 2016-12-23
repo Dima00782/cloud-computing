@@ -13,15 +13,14 @@ function Map(col, func, blockSize = 5) {
 		let size = col.length - (i + 1) * blockSize > 0 ? blockSize : col.length - i * blockSize;
 
 		let arguments = col.slice().splice(i * blockSize, size);
-		arguments = arguments.join('\n');
 
 		let functionText = "function map_iter(a)"
-			+ "{ for (let i = " + i * blockSize + "; i < " + (i * blockSize + size) + "; ++i) {"
+			+ "{ for (let i = 0; i < a.length; ++i) {"
 			+ "(" + func.toString() + ")(a); }}";
 
 		let message = JSON.stringify({
 			functionText : functionText,
-			functionArgumentsText : arguments
+			functionArgumentsText : "[ " + arguments.toString() + " ]"
 		});
 		wss.send(message);
 	}
@@ -42,7 +41,6 @@ function isNumeric(sym) {
 
 function ParseArguments(functionArguments) {
 	functionArguments = functionArguments.split('\n');
-	console.log(functionArguments);
 	functionArguments = functionArguments.map((x) => {
 		x = x.trim();
 		if (x[0] == "{") {
