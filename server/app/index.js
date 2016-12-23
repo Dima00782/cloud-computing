@@ -6,6 +6,8 @@ const FS = require('fs');
 const PATH = require('path');
 const URL = require('url');
 
+const Greeting = "I'm client!";
+
 function handleRequest(request, response) {
 	console.log(request.url);
 	let urlPath = URL.parse(request.url).pathname;
@@ -30,14 +32,24 @@ server.listen(PORT, () => { console.log("Server listening on: http://localhost:%
 const WebSocketServer = require('ws').Server;
 const wss = new WebSocketServer({ server });
 
-let connections = [];
+let nodes = [];
+let client = null;
 
 wss.on('connection', function (connection) {
-	connections.push(connection);
+	nodes.push(connection);
 
 	connection.on('message', function (message) {
-		connections[1].send(message);
-		console.log("ON MESSAGE:", message);
+		if (Greeting == message) {
+			client = connection;
+			nodes[nodes.indexOf(connection)] = null;
+		} else {
+			for (let i = 0; i < nodes.length; ++i) {
+				if (nodes[i] != null) {
+					nodes[i].send(message);
+				}
+			}
+		}
+		console.log("ON MESSAGE: ", message);
 	});
 
 	connection.on('close', function () {

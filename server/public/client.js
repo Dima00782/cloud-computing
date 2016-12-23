@@ -1,8 +1,10 @@
-let connection = new WebSocket('ws://localhost:8888');
+const connection = new WebSocket('ws://localhost:8888');
 
-let fireButton = document.querySelector('#fire-button');
-let functionArea = document.querySelector('#function-area');
-let dataArea = document.querySelector('#data-area');
+const fireButton = document.querySelector('#fire-button');
+const functionArea = document.querySelector('#function-area');
+const dataArea = document.querySelector('#data-area');
+
+const Greeting = "I'm client!";
 
 fireButton.addEventListener("click", () => {
 	let functionText = functionArea.value;
@@ -15,4 +17,7 @@ fireButton.addEventListener("click", () => {
 	connection.send(message);
 });
   
-connection.onopen = () => { console.log("Connected"); };
+connection.onopen = () => {
+	console.log("Connected");
+	connection.send(Greeting);
+};
