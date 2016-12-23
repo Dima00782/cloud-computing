@@ -19,7 +19,8 @@ wss.on('message', function(data, flags) {
 	let functionArguments = obj['functionArgumentsText'].split('\n');
 
 	functionArguments = functionArguments.map((x) => {return parseInt(x, 10);});
-	let fn = Function("return " + functionText)();
+
+	let fn = eval("() => { return " + functionText + ";}")();
 	let packagedFn = (...args) => fn(...functionArguments);
 
 	packagedFn();
