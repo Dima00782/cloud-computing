@@ -45,7 +45,7 @@ wss.on('connection', function (connection) {
 			nodes[nodes.indexOf(connection)] = null;
 		} else {
 			nodes[nodeIdx].send(message);
-			++nodeIdx;
+			nodeIdx = (nodeIdx + 1) % nodes.lenght;
 		}
 		console.log("ON MESSAGE: ", message);
 	});
