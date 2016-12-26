@@ -77,5 +77,10 @@ wss.on('message', function(data, flags) {
 
 	console.log("Run:", functionText, "Arguments:", functionArguments);
 
-	packagedFn();
+	let result = packagedFn();
+
+	wss.send(JSON.stringify({
+		result : result,
+		id : obj['id']
+	}));
 });

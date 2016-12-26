@@ -42,10 +42,18 @@ wss.on('connection', function (connection) {
 	connection.on('message', function (message) {
 		if (Greeting == message) {
 			client = connection;
-			nodes[nodes.indexOf(connection)] = null;
-		} else {
-			nodes[nodeIdx].send(message);
-			nodeIdx = (nodeIdx + 1) % nodes.lenght;
+			nodes.splice(nodes.indexOf(connection), 1);
+		}
+		else {
+			let data = JSON.parse(message);
+			if (data.hasOwnProperty('result')) {
+				client.send(message);
+			} else {
+				console.log('before', nodeIdx);
+				nodes[nodeIdx].send(message);
+				nodeIdx = (nodeIdx + 1) % nodes.length;
+				console.log('after', nodeIdx);
+			}
 		}
 		console.log("ON MESSAGE: ", message);
 	});
