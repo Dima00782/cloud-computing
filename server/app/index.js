@@ -33,6 +33,7 @@ const WebSocketServer = require('ws').Server;
 const wss = new WebSocketServer({ server });
 
 let nodes = [];
+let nodeIdx = 0;
 let client = null;
 
 wss.on('connection', function (connection) {
@@ -43,11 +44,8 @@ wss.on('connection', function (connection) {
 			client = connection;
 			nodes[nodes.indexOf(connection)] = null;
 		} else {
-			for (let i = 0; i < nodes.length; ++i) {
-				if (nodes[i] != null) {
-					nodes[i].send(message);
-				}
-			}
+			nodes[nodeIdx].send(message);
+			++nodeIdx;
 		}
 		console.log("ON MESSAGE: ", message);
 	});
