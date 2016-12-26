@@ -14,15 +14,19 @@ function Map(col, func, blockSize = 5) {
 
 		let arguments = col.slice().splice(i * blockSize, size);
 
-		let functionText = "function map_iter(a)"
-			+ "{ for (let i = 0; i < a.length; ++i) {"
-			+ "(" + func.toString() + ")(a); }}";
+		let functionText = `function map_iter(a) {
+			for (let i = 0; i < a.length; ++i) {
+				(${func.toString()})(a)
+			}
+		}`;
 
 		let message = JSON.stringify({
 			functionText : functionText,
 			functionArgumentsText : "[ " + arguments.toString() + " ]"
 		});
 		wss.send(message);
+
+		// wait here
 	}
 }
 
