@@ -2,6 +2,7 @@
 
 const WebSocket = require('ws');
 const wss = new WebSocket(process.argv[2]);
+const iterators = {};
 
 wss.on('open', function() {
 	// nothing to do here
@@ -70,6 +71,9 @@ wss.on('message', function(data, flags) {
 	}
 
 	let functionText = obj['functionText'];
+	// make generator from function
+	functionText = functionText.substr(0, 8) + "*" + functionText.substr(8);
+
 	let functionArguments = ParseArguments(obj['functionArgumentsText']);
 
 	let fn = eval("() => { return " + functionText + ";}")();
@@ -77,10 +81,15 @@ wss.on('message', function(data, flags) {
 
 	console.log("Run:", functionText, "Arguments:", functionArguments);
 
-	let result = packagedFn();
+	let iter = packagedFn();
+	let state = iter.next();
 
-	wss.send(JSON.stringify({
-		result : result,
-		id : obj['id']
-	}));
+	if (state.done == true) {
+		wss.send(JSON.stringify({
+			result : state.value,
+			id : obj['id']
+		}));
+	} else {
+		iterators[obj['id']].push(iter);
+	}
 });

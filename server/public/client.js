@@ -10,7 +10,7 @@ const Greeting = "I'm client!";
 let functionId = 0;
 
 fireButton.addEventListener("click", () => {
-	let functionText = functionArea.value;
+	let functionText = functionArea.value.trim();
 	let functionArguments = dataArea.value
 
 	let message = JSON.stringify({
