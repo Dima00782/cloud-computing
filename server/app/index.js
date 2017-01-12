@@ -49,10 +49,8 @@ wss.on('connection', function (connection) {
 			if (data.hasOwnProperty('result')) {
 				client.send(message);
 			} else {
-				console.log('before', nodeIdx);
 				nodes[nodeIdx].send(message);
 				nodeIdx = (nodeIdx + 1) % nodes.length;
-				console.log('after', nodeIdx);
 			}
 		}
 		console.log("ON MESSAGE: ", message);
