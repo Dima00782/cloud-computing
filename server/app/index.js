@@ -6,7 +6,8 @@ const FS = require('fs');
 const PATH = require('path');
 const URL = require('url');
 
-const Greeting = "I'm client!";
+const ClientGreeting = "I'm client!";
+const NodeGreeting = "I'm new node!";
 
 function handleRequest(request, response) {
 	console.log(request.url);
@@ -37,17 +38,23 @@ let nodeIdx = 0;
 let client = null;
 
 wss.on('connection', function (connection) {
-	nodes.push(connection);
-
 	connection.on('message', function (message) {
-		if (Greeting == message) {
+		if (ClientGreeting == message) {
 			client = connection;
-			nodes.splice(nodes.indexOf(connection), 1);
 		}
-		else {
+		else if (NodeGreeting == message) {
+			let currentNodeIdx = nodes.length;
+			nodes.push(connection);
+
+			connection.send(JSON.stringify({ node_id : currentNodeIdx }));
+		} else {
 			let data = JSON.parse(message);
 			if (data.hasOwnProperty('result')) {
-				client.send(message);
+				if (data.hasOwnProperty('nodeId')) {
+					nodes[parseInt(data['nodeId'])].send(message);
+				} else {
+					client.send(message);
+				}
 			} else {
 				nodes[nodeIdx].send(message);
 				nodeIdx = (nodeIdx + 1) % nodes.length;
