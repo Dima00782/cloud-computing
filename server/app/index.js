@@ -56,8 +56,15 @@ wss.on('connection', function (connection) {
 					client.send(message);
 				}
 			} else {
-				nodes[nodeIdx].send(message);
-				nodeIdx = (nodeIdx + 1) % nodes.length;
+				if (nodes.length == 0) {
+					client.send(JSON.stringify({
+						id : data['id'],
+						result : "not enough nodes"
+					}));
+				} else {
+					nodes[nodeIdx].send(message);
+					nodeIdx = (nodeIdx + 1) % nodes.length;
+				}
 			}
 		}
 		console.log("ON MESSAGE: ", message);
