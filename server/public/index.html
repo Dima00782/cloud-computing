@@ -3,6 +3,9 @@
   <head>
     <meta charset="utf-8" />
     <title>Cloud computing</title>
+    <script src="codemirror.js"></script>
+    <link rel="stylesheet" href="codemirror.css">
+    <script src="javascript.js"></script>
   </head>
   <body>
     <p>Welcome to the cloud computing demonstration</p>
@@ -10,11 +13,14 @@
      <textarea autofocus="true" rows="8" cols="50" id="function-area">
      </textarea> 
 
-     <textarea rows="8" cols="50" id="data-area">
+     <textarea id="data-area">
      </textarea>
-
+     <br/>
+     <div id="button-container">
       <button type="button" id="fire-button">Fire!</button>
-      <div id="results"></div>
+     </div>
+    <div id="results">
+    </div>
     <script src="client.js"></script>
   </body>
 </html>

@@ -5,11 +5,19 @@ const functionArea = document.querySelector('#function-area');
 const dataArea = document.querySelector('#data-area');
 const results = document.querySelector('#results');
 
+const myCodeMirror = CodeMirror.fromTextArea(functionArea, {
+	value : "",
+	mode : "javascript",
+	autofocus : true,
+	lineNumbers: true
+});
+
 const Greeting = "I'm client!";
 
 let functionId = 0;
 
 fireButton.addEventListener("click", () => {
+	myCodeMirror.save();
 	let functionText = functionArea.value.trim();
 	let functionArguments = dataArea.value
 
