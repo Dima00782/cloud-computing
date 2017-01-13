@@ -71,8 +71,10 @@ wss.on('connection', function (connection) {
 	});
 
 	connection.on('close', function () {
-		let idx = nodes.indexOf(connection);
-		nodes.splice(nodes.indexOf(connection), 1);
-		console.log("Goodbye node", idx);
+		if (client != connection) {
+			let idx = nodes.indexOf(connection);
+			nodes.splice(nodes.indexOf(connection), 1);
+			console.log("Goodbye node", idx);
+		}
 	});
 });
