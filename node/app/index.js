@@ -31,7 +31,8 @@ function* CLOUD_MAP(col, func, blockSize = 5) {
 			functionText : functionText,
 			functionArgumentsText : "[ " + arguments.toString() + " ]",
 			nodeId : nodeId,
-			id : currentFunctionId
+			id : currentFunctionId,
+			blockIdx : i * blockSize
 		});
 		wss.send(message);
 	}
@@ -90,7 +91,8 @@ function handleState(state, obj, iter) {
 		let msg = JSON.stringify({
 			result : value,
 			id : obj['id'],
-			nodeId : obj['nodeId']
+			nodeId : obj['nodeId'],
+			blockIdx : obj['blockIdx']
 		});
 
 		console.log("MESSAGE", msg);
@@ -111,12 +113,23 @@ function handleState(state, obj, iter) {
 function handleResult(obj) {
 	currentFunctionId = obj['id'];
 	let functionState = iterators[obj['id']];
-	functionState.values = functionState.values.concat(obj['result']);
+	functionState.values.push({
+		values : obj['result'],
+		id : obj['blockIdx']
+	});
 	--functionState.nblocks;
 
 	if (functionState.nblocks == 0) {
+		let values = new Array(functionState.nblocks);
+		functionState.values.forEach((block) => {
+			let j = block.id;
+			for (let k = 0; k < block.values.length; ++k) {
+				values[j++] = block.values[k];
+			}
+		});
+		functionState.values = values;
 		iterators[currentFunctionId] = undefined;
-		handleState(functionState.iter.next(functionState.values), functionState.obj, functionState.iter);
+		handleState(functionState.iter.next(values), functionState.obj, functionState.iter);
 
 	} else {
 		iterators[currentFunctionId] = functionState;
