@@ -64,6 +64,8 @@ wss.on('connection', function (connection) {
 	});
 
 	connection.on('close', function () {
-		console.log("ON CLOSE");
+		let idx = nodes.indexOf(connection);
+		nodes.splice(nodes.indexOf(connection), 1);
+		console.log("Goodbye node", idx);
 	});
 });
