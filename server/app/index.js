@@ -51,6 +51,10 @@ wss.on('connection', function (connection) {
 			let data = JSON.parse(message);
 			if (data.hasOwnProperty('result')) {
 				if (data.hasOwnProperty('nodeId')) {
+					client.send(JSON.stringify({
+						id : data['id'],
+						progress : true
+					}));
 					nodes[parseInt(data['nodeId'])].send(message);
 				} else {
 					client.send(message);

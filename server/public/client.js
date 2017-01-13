@@ -3,7 +3,9 @@ const connection = new WebSocket('ws://localhost:8888');
 const fireButton = document.querySelector('#fire-button');
 const functionArea = document.querySelector('#function-area');
 const dataArea = document.querySelector('#data-area');
-const results = document.querySelector('#results');
+const resultsContainer = document.querySelector('#results');
+const results = {};
+const SIZE_OF_ONE_BLOCK = 20;
 
 const myCodeMirror = CodeMirror.fromTextArea(functionArea, {
 	value : "",
@@ -35,6 +37,20 @@ connection.onopen = () => {
 	connection.send(Greeting);
 };
 
+function getResultRecord(id) {
+	if (!results[id]) {
+		let paragraph = document.createElement("p");
+		paragraph.className = "results-paragraph";
+		let progress = document.createElement("progress")
+		paragraph.appendChild(progress);
+		results[id] = {
+			paragraph : paragraph,
+			progress : progress
+		};
+	}
+	return results[id];
+}
+
 connection.onmessage = (event) => {
 	let data = null;
 	try {
@@ -43,10 +59,20 @@ connection.onmessage = (event) => {
 		console.log(e);
 	}
 
-	if (data != null && data.hasOwnProperty('result')) {
-		let paragraph = document.createElement("p");
-		let text = document.createTextNode(`id = ${data['id']} result = ${data['result']}`);
-		paragraph.appendChild(text);
-		results.appendChild(paragraph);
+	if (data != null) {
+		if (data.hasOwnProperty('result')) {
+			let result = getResultRecord(data['id']);
+			let text = document.createTextNode(`id = ${data['id']} result = ${data['result']}`);
+			result.progress.value = result.progress.max;
+			result.paragraph.appendChild(text);
+		} else {
+			console.log(data);
+			let result = getResultRecord(data['id']);
+			if (result.progress.position + SIZE_OF_ONE_BLOCK >= result.progress.max) {
+				result.progress.max += 2 * SIZE_OF_ONE_BLOCK;
+			}
+			result.progress.value = result.progress.position + SIZE_OF_ONE_BLOCK;
+			resultsContainer.appendChild(result.paragraph);
+		}
 	}
 };
